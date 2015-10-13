@@ -41,6 +41,7 @@ public class ScanTest {
 		driver = new ChromeDriver();
 		driver.get(appURL);
 		
+		
 		try {
 			Thread.sleep(20000);
 		} catch (InterruptedException e) {
@@ -48,6 +49,7 @@ public class ScanTest {
 			e.printStackTrace();
 		}
 		new ScanTest().scan();
+
 		
 	}
 	
@@ -61,8 +63,13 @@ public class ScanTest {
 		List<WebElement> docs = new ArrayList<WebElement>();
 		docs = driver.findElements(By.className("doc-number"));
 		
-		for (WebElement webElement : docs) {
-			System.out.println(webElement.getText());
+		if(docs.isEmpty())
+		{
+			System.out.println("Scan failed");
+		}
+		else
+		{
+			System.out.println("Scan passed");
 		}
 		
 	}
