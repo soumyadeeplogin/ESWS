@@ -1,0 +1,5 @@
+Properties prop = new Properties();
+InputStream input = null;
+input = new FileInputStream("config.properties");
+prop.load(input);
+(prop.getProperty("emailTo"));
