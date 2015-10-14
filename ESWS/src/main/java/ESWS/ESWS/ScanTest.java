@@ -1,5 +1,6 @@
 package ESWS.ESWS;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -48,8 +49,25 @@ public class ScanTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("Clearing...");
+		new ScanTest().clear();
+		
+		int toScan = inputCount();
+		System.out.println("Number of files :: " + toScan);
+		
+		System.out.println("Scanning...");
 		new ScanTest().scan();
-
+		System.out.println("Counting...");
+		int scanned = new ScanTest().docCount();
+		
+		if(scanned==toScan)
+		{
+			System.out.println("Scanned all " + toScan + " files. Success.");
+		}
+		else
+		{
+			System.out.println("Scanned " + scanned + " out of " + toScan + " files. Failed.");
+		}
 		
 	}
 	
@@ -57,21 +75,68 @@ public class ScanTest {
 	{
 		WebElement btnScan = driver.findElement(By.id("start-scanner"));
 		btnScan.click();
+	}
+	
+	public void clear()
+	{
 		
-		wait = new WebDriverWait(driver, 50);
-		WebElement docWait = wait.until(ExpectedConditions.elementToBeClickable(By.id("start-scanner")));
 		List<WebElement> docs = new ArrayList<WebElement>();
 		docs = driver.findElements(By.className("doc-number"));
-		
 		if(docs.isEmpty())
 		{
-			System.out.println("Scan failed");
+			System.out.println("Cleaning not required.");
 		}
 		else
-		{
-			System.out.println("Scan passed");
+		{			
+			WebElement btnSAll = driver.findElement(By.id("docSelectAllCheckbox"));
+			btnSAll.click();
+			WebElement btnDel = driver.findElement(By.id("delete-doc-button"));
+			btnDel.click();
+			WebElement btnOk = driver.findElement(By.id("dialog-confirmation-ok-c175"));
+			btnOk.click();
+			System.out.println("Cleaned");
+		}
+	}
+	
+	
+	public static int inputCount()
+	{
+		int count = 0;
+		File f = new File("C:\\TestESWS\\");
+	    File[] files = f.listFiles();
+
+	    if (files != null)
+	    for (int i = 0; i < files.length; i++) {
+	        count++;
+	        File file = files[i];
+	    }
+		return count;
+	}
+	
+	public int docCount()
+	{
+		int count = 0;
+		int pageCount = 0;
+		wait = new WebDriverWait(driver, 50);
+		WebElement docWait = wait.until(ExpectedConditions.elementToBeClickable(By.id("start-scanner")));
+		
+		List<WebElement> docs = new ArrayList<WebElement>();
+		docs = driver.findElements(By.className("doc-number"));
+		System.out.println("Doc Size :: "+docs.size());
+		
+		List<WebElement> pages = new ArrayList<WebElement>();
+		pages = driver.findElements(By.className("doc-info"));
+		
+				
+		for (WebElement webElement : pages) {
+			String temp = webElement.getText();
+//			System.out.println(temp);
+			pageCount += Integer.parseInt(temp.substring(temp.lastIndexOf(' ')+1, temp.length()));
 		}
 		
+		System.out.println("Total Pages = " + pageCount);
+//		System.out.println("Document and pages");
+		return pageCount;
 	}
 
 }
